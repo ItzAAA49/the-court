@@ -31,9 +31,9 @@ if(u.pathname==="/api/ask"&&req.method==="POST"){
 let p=decodeURIComponent(u.pathname);if(p==="/")p="/index.html";if(p.includes(".."))return send(res,403,{error:"forbidden"});const f=path.join(root,p),st=await stat(f).catch(()=>null);if(!st?.isFile())return send(res,404,{error:"not found"});let data=await readFile(f);
 if(p==="/assets/js/game.js"){
   let source=data.toString("utf8");
+  source=source.replaceAll("state.case.actions<=0","false");
   source=source.replaceAll("c.actions<=0||c.day>=c.days","false");
   source=source.replaceAll("c.actions<=0","false");
-  source=source.replaceAll("state.case.actions<=0","false");
   source=source.replaceAll("c.actions--;","");
   source=source.replaceAll("c.actions=2;","c.actions=999;");
   source=source.replaceAll("質問には本日の行動回数を1回消費します。","質問回数に制限はありません。");
