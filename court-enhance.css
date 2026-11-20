@@ -138,3 +138,16 @@ body{background:#f2f5f8!important;color:#263445!important;font-family:system-ui,
   #gameScreen .court-ai-compose-footer span{max-width:55%}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+#titleScreen{background:#f2f5f8!important;color:#25384d!important;min-height:100vh}
+#titleScreen .title-grid{opacity:.16!important;background-image:linear-gradient(#b8c7d4 1px,transparent 1px),linear-gradient(90deg,#b8c7d4 1px,transparent 1px)!important;background-size:36px 36px!important}
+#titleScreen .title-kicker{color:#6b8297!important;font-weight:800!important;letter-spacing:.12em!important}
+#titleScreen .brand{color:#203b57!important;text-shadow:none!important;font-size:clamp(40px,6vw,68px)!important}
+#titleScreen .brand span{color:#61778d!important;text-shadow:none!important}
+#titleScreen .title-desc{color:#53687d!important;font-size:15px!important;line-height:1.9!important}
+#titleScreen .primary-btn{background:#315f86!important;color:#fff!important;border:1px solid #315f86!important;border-radius:9px!important;box-shadow:none!important}
+#titleScreen .ghost-btn{background:#fff!important;color:#34536f!important;border:1px solid #d2dee8!important;border-radius:9px!important}
+#titleScreen .seal{background:linear-gradient(145deg,#edf3f8,#fff)!important;border:1px solid #d4e0ea!important;box-shadow:0 15px 38px #2b466018!important}
+#titleScreen .seal-inner{border-color:#b6c7d6!important;color:#46647f!important}
+#titleScreen .seal-icon{color:#426889!important}
+#titleScreen .seal-caption{color:#71869a!important}
+#titleScreen .title-foot{color:#78899a!important;font-size:10px!important;line-height:1.8!important}
