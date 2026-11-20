@@ -17,18 +17,13 @@ let p=decodeURIComponent(u.pathname);if(p==="/")p="/index.html";if(p.includes(".
 }catch(e){send(res,500,{error:e.message||"server error"});}});
 async function inspectUi(){
   try{
-    const [html,js,css]=await Promise.all([
+    const [html,js]=await Promise.all([
       readFile(path.join(root,"index.html"),"utf8"),
-      readFile(path.join(root,"assets/js/game.js"),"utf8"),
-      readFile(path.join(root,"assets/css/style.css"),"utf8")
+      readFile(path.join(root,"assets/js/game.js"),"utf8")
     ]);
-    const ids=[...new Set([...html.matchAll(/\\bid=["']([^"']+)/g)].map(m=>m[1]))];
-    const actions=[...new Set([...html.matchAll(/data-action=["']([^"']+)/g),...js.matchAll(/data-action=["']([^"']+)/g)].map(m=>m[1]))];
-    const selectorIds=[...new Set([...js.matchAll(/querySelector(?:All)?\\(["']#([\\w-]+)/g)].map(m=>m[1]))];
-    const named=[...new Set([...js.matchAll(/(?:id|className)\\s*=\\s*["']([^"']+)/g)].map(m=>m[1]).filter(x=>x.length<70))];
-    const funcs=[...new Set([...js.matchAll(/function\\s+([\\w$]+)/g)].map(m=>m[1]))];
-    const excerpts=["action","day","turns","limit","toolbar","sidebar","tabContent","localStorage"].map(k=>({key:k,js:js.split("\\n").filter(l=>l.toLowerCase().includes(k.toLowerCase())).slice(0,5)}));
-    console.log("COURT_INSPECT "+JSON.stringify({htmlIds:ids,htmlActions:actions,jsSelectors:selectorIds,jsNames:named.slice(0,120),functions:funcs,excerpts,bodyStart:html.slice(html.indexOf("<body"),html.indexOf("<body")+2500),cssSize:css.length}));
+    console.log("COURT_HTML "+JSON.stringify({start:html.slice(0,1800),ids:html.match(/id="[^"]+"/g)||[],actions:html.match(/data-action="[^"]+"/g)||[]}));
+    console.log("COURT_JS_NAMES "+JSON.stringify(js.match(/function [A-Za-z_$][A-Za-z0-9_$]*/g)||[]));
+    console.log("COURT_JS_START "+js.slice(0,9000));
   }catch(e){console.log("COURT_INSPECT_ERROR "+e.message)}
 }
 inspectUi();
