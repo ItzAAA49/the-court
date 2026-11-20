@@ -21,9 +21,12 @@ async function inspectUi(){
       readFile(path.join(root,"index.html"),"utf8"),
       readFile(path.join(root,"assets/js/game.js"),"utf8")
     ]);
-    console.log("COURT_HTML "+JSON.stringify({start:html.slice(0,1800),ids:html.match(/id="[^"]+"/g)||[],actions:html.match(/data-action="[^"]+"/g)||[]}));
-    console.log("COURT_JS_NAMES "+JSON.stringify(js.match(/function [A-Za-z_$][A-Za-z0-9_$]*/g)||[]));
-    console.log("COURT_JS_START "+js.slice(0,9000));
+    const area=html.indexOf('id="gameScreen"');
+    console.log("COURT_LAYOUT "+html.slice(area,area+6500));
+    for(const key of ["function dayNarrative","function nextDay","function renderTab","function handleAction","function render()","function askPerson","function listenCounsel","document.addEventListener","function verdictModal"]){
+      const i=js.indexOf(key);
+      console.log("COURT_CODE_"+key+" "+(i>=0?js.slice(i,i+2200):"NOT FOUND"));
+    }
   }catch(e){console.log("COURT_INSPECT_ERROR "+e.message)}
 }
 inspectUi();
