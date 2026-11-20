@@ -151,3 +151,12 @@ body{background:#f2f5f8!important;color:#263445!important;font-family:system-ui,
 #titleScreen .seal-icon{color:#426889!important}
 #titleScreen .seal-caption{color:#71869a!important}
 #titleScreen .title-foot{color:#78899a!important;font-size:10px!important;line-height:1.8!important}
+
+#gameScreen .court-ai-mode{display:flex;align-items:center;gap:10px;padding:8px 2px;color:#5b7186;font-size:12px}
+#gameScreen .court-ai-mode label{font-weight:750;flex:0 0 auto}
+#gameScreen .court-ai-mode select{flex:1;min-width:0;padding:8px 9px;border:1px solid #d4dee7;border-radius:8px;background:#fff;color:#2c4056;font-size:12px}
+#gameScreen .court-law-choice{width:100%;text-align:left;cursor:pointer;font:inherit}
+#gameScreen .court-law-choice:hover{background:#edf4f9;border-color:#b9ccdd}
+#gameScreen .court-selected-law{background:#edf4f8;color:#345875;border:1px solid #d3e1ec;border-radius:8px;padding:9px;margin-top:9px;font-size:12px;font-weight:750}
+#gameScreen .court-verdict-picker{margin-bottom:14px}
+@media(max-width:600px){#gameScreen .court-ai-mode{align-items:stretch;flex-direction:column;gap:5px}}
