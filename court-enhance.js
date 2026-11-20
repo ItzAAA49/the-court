@@ -47,7 +47,7 @@ function renderTool(name){
   const root=$("#tabContent");if(!root)return;
   const c=currentCase();
   if(name==="ai"){
-    root.innerHTML='<section class="court-tool-view court-ai-shell"><div class="court-tool-heading"><div><span class="court-eyebrow">OPEN CONVERSATION</span><h3>AIに自由に質問</h3><p>質問内容は自由です。事件の整理、法律の説明、人物の心情、判決理由、ゲームの相談、一般的な話題まで対応します。</p></div><button type="button" class="court-light-button" id="courtAiClear">会話を消去</button></div><div class="court-ai-messages" id="courtAiMessages" aria-live="polite"></div><div class="court-ai-suggestions"><button type="button" data-ai-prompt="この事件の争点を整理して">争点を整理</button><button type="button" data-ai-prompt="今までの証拠から考えられる別の見方は？">証拠を分析</button><button type="button" data-ai-prompt="刑事裁判の流れをわかりやすく説明して">裁判の流れ</button><button type="button" data-ai-prompt="このゲームの自由度を上げるアイデアを出して">アイデア</button></div><form id="courtAiForm" class="court-ai-compose"><textarea id="courtAiInput" rows="3" maxlength="3000" placeholder="聞きたいことを自由に入力してください。例：この証拠だけで有罪と判断してよい？"></textarea><div class="court-ai-compose-footer"><span>最大3,000文字・会話履歴はこのブラウザに保存</span><button type="submit" id="courtAiSend">送信する　↗</button></div></form></section>';
+    root.innerHTML='<section class="court-tool-view court-ai-shell"><div class="court-tool-heading"><div><span class="court-eyebrow">OPEN CONVERSATION</span><h3>AIに自由に質問</h3><p>質問内容は自由です。事件の整理、法律の説明、人物の心情、判決理由、ゲームの相談、一般的な話題まで対応します。</p></div><button type="button" class="court-light-button" id="courtAiClear">会話を消去</button></div><div class="court-ai-messages" id="courtAiMessages" aria-live="polite"></div><div class="court-ai-suggestions"><button type="button" data-ai-prompt="この事件の争点を整理して">争点を整理</button><button type="button" data-ai-prompt="今までの証拠から考えられる別の見方は？">証拠を分析</button><button type="button" data-ai-prompt="刑事裁判の流れをわかりやすく説明して">裁判の流れ</button><button type="button" data-ai-prompt="このゲームの自由度を上げるアイデアを出して">アイデア</button></div><div class="court-ai-mode"><label for="courtAiMode">回答モード</label><select id="courtAiMode"><option value="general">AIアシスタント（何でも自由に質問）</option><option value="defendant">被告人に質問する</option><option value="witness">証人に質問する</option><option value="prosecution">検察官に質問する</option><option value="defense">弁護人に質問する</option></select></div><form id="courtAiForm" class="court-ai-compose"><textarea id="courtAiInput" rows="3" maxlength="3000" placeholder="聞きたいことを自由に入力してください。例：この証拠だけで有罪と判断してよい？"></textarea><div class="court-ai-compose-footer"><span>最大3,000文字・会話履歴はこのブラウザに保存</span><button type="submit" id="courtAiSend">送信する　↗</button></div></form></section>';
     showChatHistory();
     return;
   }
@@ -96,7 +96,7 @@ async function sendAiQuestion(q){
   const messages=$("#courtAiMessages");
   try{
     const ctx=getCaseContext();
-    const response=await fetch("/api/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({target:"general",question:q,case:ctx.case,transcript:ctx.transcript,history:prior})});
+    const response=await fetch("/api/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({target:$("#courtAiMode")?.value||"general",question:q,case:ctx.case,transcript:ctx.transcript,history:prior})});
     const data=await response.json();
     if(!response.ok)throw new Error(data.error||"AIから回答を取得できませんでした。");
     const answer=String(data.answer||"回答を取得できませんでした。");
