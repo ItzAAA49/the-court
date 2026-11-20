@@ -127,10 +127,33 @@ async function searchLaws(query,category,resultRoot){
     });
   }catch(e){resultRoot.textContent=e.message||"法令検索に失敗しました。";}
 }
+function addVerdictPicker(){
+  const modal=$("#modalRoot"),body=modal?.querySelector(".modal-body");
+  if(!body||!modal.innerText.includes("判決")||body.querySelector("#courtVerdictLaw"))return;
+  const box=document.createElement("section");box.id="courtVerdictLaw";box.className="court-tool-view court-verdict-picker";
+  box.innerHTML='<span class="court-eyebrow">LEGAL BASIS</span><h3>適用法令を確認</h3><p>判決理由で参照する法令を探せます。選んだ法令名はこの判決画面に表示されます。</p><div class="court-law-form"><select id="courtVerdictCat"><option value="all">すべての分野</option><option value="刑事">刑事</option><option value="民事">民事</option><option value="憲法">憲法・行政</option><option value="労働">労働</option><option value="経済">経済</option><option value="環境">環境</option><option value="その他">その他</option></select><input id="courtVerdictQuery" placeholder="法令名・キーワード"><button type="button" id="courtVerdictSearch">検索</button></div><div id="courtVerdictResults" class="court-law-results"></div><div id="courtSelectedLaw" class="court-selected-law">選択中の法令：未選択</div>';
+  body.prepend(box);
+}
+async function searchVerdictLaws(){
+  const root=$("#courtVerdictResults");if(!root)return;
+  root.textContent="法令を検索しています…";
+  try{
+    const r=await fetch("/api/laws?q="+encodeURIComponent($("#courtVerdictQuery")?.value||"")+"&category="+encodeURIComponent($("#courtVerdictCat")?.value||"all"));
+    const d=await r.json();if(!r.ok)throw new Error(d.error||"検索に失敗しました。");
+    root.innerHTML="";
+    if(!d.laws||!d.laws.length){root.textContent="該当する法令がありません。";return;}
+    d.laws.forEach(x=>{
+      const b=document.createElement("button");b.type="button";b.className="court-law-result court-law-choice";b.dataset.lawChoice=x.name;b.dataset.lawId=x.id;
+      const title=document.createElement("b");title.textContent=x.name;
+      const detail=document.createElement("small");detail.textContent=[x.number,x.category].filter(Boolean).join(" ・ ");
+      b.append(title,detail);root.appendChild(b);
+    });
+  }catch(e){root.textContent=e.message||"法令検索に失敗しました。";}
+}
 function init(){
-  addToolbar();markStanding();
+  addToolbar();markStanding();addVerdictPicker();
   if(!window.__courtEnhanceObserver){
-    const observer=new MutationObserver(()=>{addToolbar();markStanding();});
+    const observer=new MutationObserver(()=>{addToolbar();markStanding();addVerdictPicker();});
     observer.observe(document.body,{childList:true,subtree:true});
     window.__courtEnhanceObserver=observer;
   }
@@ -148,6 +171,14 @@ document.addEventListener("click",e=>{
   }
   if(e.target.closest("#courtLawSearch")){
     searchLaws($("#courtLawQuery")?.value||"",$("#courtLawCat")?.value||"all",$("#courtLawResults"));return;
+  }
+  if(e.target.closest("#courtVerdictSearch")){searchVerdictLaws();return;}
+  const lawChoice=e.target.closest("[data-law-choice]");
+  if(lawChoice){
+    const label=$("#courtSelectedLaw");
+    if(label)label.textContent="選択中の法令："+lawChoice.dataset.lawChoice;
+    localStorage.setItem("the-court-selected-law-"+caseKey(),JSON.stringify({name:lawChoice.dataset.lawChoice,id:lawChoice.dataset.lawId||""}));
+    return;
   }
   if(e.target.closest("#courtMemoSave")){
     localStorage.setItem(memoKey(),$("#courtJudgeMemo")?.value||"");
