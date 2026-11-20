@@ -15,4 +15,21 @@ if(u.pathname==="/api/ask"&&req.method==="POST"){if(!process.env.OPENAI_API_KEY)
 if(u.pathname==="/api/laws"){const q=(u.searchParams.get("q")||"").toLowerCase(),c=u.searchParams.get("category")||"all",all=await lawList(),found=all.filter(v=>(c==="all"||v.category===c)&&(!q||(v.name+" "+v.number).toLowerCase().includes(q))).slice(0,100);return send(res,200,{total:found.length,laws:found});}
 let p=decodeURIComponent(u.pathname);if(p==="/")p="/index.html";if(p.includes(".."))return send(res,403,{error:"forbidden"});const f=path.join(root,p),st=await stat(f).catch(()=>null);if(!st?.isFile())return send(res,404,{error:"not found"});let data=await readFile(f);if(p==="/index.html"){let html=data.toString();html=html.replace("</head>","<link rel=\\\"stylesheet\\\" href=\\\"/court-enhance.css\\\"></head>").replace("</body>","<script src=\\\"/court-enhance.js\\\"></script></body>");data=Buffer.from(html);}res.writeHead(200,{"content-type":mime[path.extname(f)]||"application/octet-stream","cache-control":"no-cache"});res.end(data);
 }catch(e){send(res,500,{error:e.message||"server error"});}});
+async function inspectUi(){
+  try{
+    const [html,js,css]=await Promise.all([
+      readFile(path.join(root,"index.html"),"utf8"),
+      readFile(path.join(root,"assets/js/game.js"),"utf8"),
+      readFile(path.join(root,"assets/css/style.css"),"utf8")
+    ]);
+    const ids=[...new Set([...html.matchAll(/\\bid=["']([^"']+)/g)].map(m=>m[1]))];
+    const actions=[...new Set([...html.matchAll(/data-action=["']([^"']+)/g),...js.matchAll(/data-action=["']([^"']+)/g)].map(m=>m[1]))];
+    const selectorIds=[...new Set([...js.matchAll(/querySelector(?:All)?\\(["']#([\\w-]+)/g)].map(m=>m[1]))];
+    const named=[...new Set([...js.matchAll(/(?:id|className)\\s*=\\s*["']([^"']+)/g)].map(m=>m[1]).filter(x=>x.length<70))];
+    const funcs=[...new Set([...js.matchAll(/function\\s+([\\w$]+)/g)].map(m=>m[1]))];
+    const excerpts=["action","day","turns","limit","toolbar","sidebar","tabContent","localStorage"].map(k=>({key:k,js:js.split("\\n").filter(l=>l.toLowerCase().includes(k.toLowerCase())).slice(0,5)}));
+    console.log("COURT_INSPECT "+JSON.stringify({htmlIds:ids,htmlActions:actions,jsSelectors:selectorIds,jsNames:named.slice(0,120),functions:funcs,excerpts,bodyStart:html.slice(html.indexOf("<body"),html.indexOf("<body")+2500),cssSize:css.length}));
+  }catch(e){console.log("COURT_INSPECT_ERROR "+e.message)}
+}
+inspectUi();
 srv.listen(port,"0.0.0.0",()=>console.log("THE COURT server "+port));
