@@ -1,0 +1,12 @@
+{
+  "name": "the-court-render-bootstrap",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Render bootstrap for the fresh multi-file The Court game",
+  "scripts": {
+    "start": "node bootstrap.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
