@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: last-chance-table-v3
+    runtime: static
+    buildCommand: >-
+      node -e 'const fs=require("fs"),z=require("zlib");fs.writeFileSync("/tmp/last-chance.tar",z.brotliDecompressSync(fs.readFileSync("last-chance-v3-payload.tar.br")))' &&
+      tar -xf /tmp/last-chance.tar &&
+      node --test &&
+      npm run build
+    staticPublishPath: ./dist
