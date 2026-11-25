@@ -3,7 +3,8 @@ services:
     name: last-chance-table-v3
     runtime: static
     buildCommand: >-
-      node -e 'const fs=require("fs"),z=require("zlib");fs.writeFileSync("/tmp/last-chance.tar",z.brotliDecompressSync(fs.readFileSync("last-chance-v3-payload.tar.br")))' &&
+      cat last-chance-payload/part-01.b64 last-chance-payload/part-02.b64 last-chance-payload/part-03.b64 last-chance-payload/part-04.b64 last-chance-payload/part-05.b64 last-chance-payload/part-06.b64 | base64 -d > /tmp/last-chance.tar.br &&
+      node -e 'const fs=require("fs"),z=require("zlib");fs.writeFileSync("/tmp/last-chance.tar",z.brotliDecompressSync(fs.readFileSync("/tmp/last-chance.tar.br")))' &&
       tar -xf /tmp/last-chance.tar &&
       node --test &&
       npm run build
