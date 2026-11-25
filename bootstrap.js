@@ -8,7 +8,7 @@ const { execFileSync } = require('node:child_process');
 
 const root = __dirname;
 const parts = fs.readdirSync(root)
-  .filter((name) => /^source\\.part\\.\\d+$/.test(name))
+  .filter((name) => /^source[.]part[.][0-9]+$/.test(name))
   .sort();
 
 if (parts.length === 0) {
