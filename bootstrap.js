@@ -30,6 +30,8 @@ try {
   }
 
   console.log('The Court source archive extracted successfully.');
+  const patchResult = require('./runtime-patches.js').apply(root);
+  console.log('[The Court runtime patches]', patchResult.patched.join(', '));
   require('./server/server.js');
 } catch (error) {
   console.error('[The Court bootstrap failed]', error.message);
